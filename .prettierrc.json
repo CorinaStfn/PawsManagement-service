@@ -1,0 +1,39 @@
+{
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-prisma"
+  ],
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "^config/(.*)$",
+    "^constants/(.*)$",
+    "^utils/(.*)$",
+    "^middlewares/(.*)$",
+    "^services/(.*)$",
+    "^controllers/(.*)$",
+    "^repositories/(.*)$",
+    "^models/(.*)$",
+    "^routes/(.*)$",
+    "^validators/(.*)$",
+    "^prisma/(.*)$",
+    "^types/(.*)$",
+    "^workers/(.*)$",
+    "^jobs/(.*)$",
+    "^interfaces/(.*)$",
+    "^helpers/(.*)$",
+    "^decorators/(.*)$",
+    "^loaders/(.*)$",
+    "^events/(.*)$",
+    "^logs/(.*)$",
+    "^scripts/(.*)$",
+    "^[./]"
+  ]
+}

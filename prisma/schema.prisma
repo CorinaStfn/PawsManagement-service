@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pets {
+  petId               String                  @id @default(uuid()) @db.Uuid
+  knownDateOfBirth    DateTime?
+  estimateDateOfBirth DateTime?
+  arrivalDate         DateTime?
+  species             String
+  status              String
+  breeds              PetBreed[]
+  healthConditions    PetHealthCondition[]
+  fosters             Foster[]
+  adoptions           Adoption[]
+  interventions       Intervention[]
+  treatments          PetTreatment[]
+}
+
+model Breed {
+  breedId         String                         @id @default(uuid()) @db.Uuid
+  name            String
+  behavior        String?
+  lifeSpan        Int?
+  origin          String?
+  size            String?
+  coat            String?
+  exerciseNeeds   String?
+  training        String?
+  grooming        String?
+  health          String?
+  pets            PetBreed[]
+  proneConditions HealthConditionBreedProne[]
+}
+
+model PetBreed {
+  petBreedId String   @id @default(uuid()) @db.Uuid
+  pet        Pets  @relation(fields: [petId], references: [petId])
+  petId      String   @db.Uuid
+  breed      Breed @relation(fields: [breedId], references: [breedId])
+  breedId    String   @db.Uuid
+}
+
+model HealthCondition {
+  healthConditionId String                         @id @default(uuid()) @db.Uuid
+  scientificName    String
+  commonName        String
+  description       String?
+  symptoms          String?
+  species           String?
+  causes            String?
+  prevention        String?
+  severityLevel     String?
+  breedsProne       HealthConditionBreedProne[]
+  petsAffected      PetHealthCondition[]
+}
+
+model HealthConditionBreedProne {
+  healthConditionBreedProneId String             @id @default(uuid()) @db.Uuid
+  breed                       Breed           @relation(fields: [breedId], references: [breedId])
+  breedId                     String             @db.Uuid
+  healthCondition             HealthCondition @relation(fields: [healthConditionId], references: [healthConditionId])
+  healthConditionId           String             @db.Uuid
+}
+
+model PetHealthCondition {
+  petHealthConditionId String             @id @default(uuid()) @db.Uuid
+  pet                  Pets            @relation(fields: [petId], references: [petId])
+  petId                String           @db.Uuid
+  healthCondition      HealthCondition @relation(fields: [healthConditionId], references: [healthConditionId])
+  healthConditionId    String           @db.Uuid
+  notes                String?
+}
+
+model Foster {
+  fosterId  String             @id @default(uuid()) @db.Uuid
+  pet       Pets            @relation(fields: [petId], references: [petId])
+  petId     String          @db.Uuid
+  person    AdopterFosterer @relation(fields: [personId], references: [personId])
+  personId  String          @db.Uuid
+  startDate DateTime
+  endDate   DateTime?
+  notes     String?
+}
+
+model AdopterFosterer {
+  personId     String        @id @default(uuid()) @db.Uuid
+  firstName    String
+  middleName   String?
+  lastName     String
+  phoneNumber  String?
+  emailAddress String?
+  address      String?
+  fosters      Foster[]
+  adoptions    Adoption[]
+}
+
+model Adoption {
+  adoptionId   String             @id @default(uuid()) @db.Uuid
+  pet          Pets            @relation(fields: [petId], references: [petId])
+  petId        String          @db.Uuid
+  person       AdopterFosterer @relation(fields: [personId], references: [personId])
+  personId     String          @db.Uuid
+  adoptionDate DateTime
+  notes        String?
+}
+
+model Treatment {
+  treatmentId            String            @id @default(uuid()) @db.Uuid
+  drugName               String
+  description            String?
+  species                String?
+  possibleSideEffects    String?
+  costRange              String?
+  averageDuration        String?
+  methodOfAdministration String?
+  petTreatments          PetTreatment[]
+}
+
+model PetTreatment {
+  petTreatmentId String       @id @default(uuid()) @db.Uuid
+  pet            Pets      @relation(fields: [petId], references: [petId])
+  petId          String    @db.Uuid
+  doctor         Doctors   @relation(fields: [doctorId], references: [doctorId])
+  doctorId       String    @db.Uuid
+  treatment      Treatment @relation(fields: [treatmentId], references: [treatmentId])
+  treatmentId    String    @db.Uuid
+  notes          String?
+}
+
+model Doctors {
+  doctorId      String            @id @default(uuid()) @db.Uuid
+  firstName     String
+  middleName    String?
+  lastName      String
+  phoneNumber   String?
+  email         String?
+  address       String?
+  interventions Intervention[]
+  treatments    PetTreatment[]
+}
+
+model Procedures {
+  procedureId    String            @id @default(uuid()) @db.Uuid
+  scientificName String
+  commonName     String
+  description    String?
+  costRange      String?
+  rateOfSuccess  String?
+  interventions  Intervention[]
+}
+
+model Intervention {
+  interventionId   String        @id @default(uuid()) @db.Uuid
+  pet              Pets       @relation(fields: [petId], references: [petId])
+  petId            String     @db.Uuid
+  doctor           Doctors    @relation(fields: [doctorId], references: [doctorId])
+  doctorId         String     @db.Uuid
+  procedure        Procedures @relation(fields: [procedureId], references: [procedureId])
+  procedureId      String     @db.Uuid
+  startOfProcedure DateTime
+  endOfProcedure   DateTime?
+  doctorNotes      String?
+  wasSuccessful    Boolean
+}
